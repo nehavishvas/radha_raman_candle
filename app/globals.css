@@ -1,26 +1,141 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f3f6f9;
+  --foreground: #081d33;
+  
+  /* Brand luxury color variables */
+  --color-brand-peach: #e8c5af;
+  --color-brand-peach-light: #f7e6db;
+  --color-brand-peach-dark: #cc9f83;
+  --color-brand-cream: #f6f9fc;
+  --color-brand-charcoal: #05162e;
+  --color-brand-gold: #c5a880;
+  --color-brand-gold-dark: #aa8c64;
+  --color-brand-glow: #005d9e;
+  
+  /* Peacock blue colors from feather */
+  --color-brand-blue: #005d9e;
+  --color-brand-blue-dark: #004272;
+  --color-brand-blue-glow: #00a4b4;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-brand-peach: var(--color-brand-peach);
+  --color-brand-peach-light: var(--color-brand-peach-light);
+  --color-brand-peach-dark: var(--color-brand-peach-dark);
+  --color-brand-cream: var(--color-brand-cream);
+  --color-brand-charcoal: var(--color-brand-charcoal);
+  --color-brand-gold: var(--color-brand-gold);
+  --color-brand-gold-dark: var(--color-brand-gold-dark);
+  --color-brand-glow: var(--color-brand-glow);
+  
+  /* Peacock blue additions */
+  --color-brand-blue: var(--color-brand-blue);
+  --color-brand-blue-dark: var(--color-brand-blue-dark);
+  --color-brand-blue-glow: var(--color-brand-blue-glow);
+  
+  --font-serif: "Cormorant Garamond", Georgia, serif;
+  --font-sans: var(--font-geist-sans), "Inter", system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), monospace;
+  
+  --animate-flame: flame-pulse 2s infinite ease-in-out;
+  --animate-float: float-slow 6s infinite ease-in-out;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@keyframes flame-pulse {
+  0%, 100% {
+    transform: scale(1) rotate(-1deg);
+    opacity: 0.9;
+    filter: drop-shadow(0 0 4px var(--color-brand-glow));
+  }
+  50% {
+    transform: scale(1.1) rotate(1deg);
+    opacity: 1;
+    filter: drop-shadow(0 0 10px var(--color-brand-glow)) drop-shadow(0 0 20px #e8a276);
+  }
+}
+
+@keyframes float-slow {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(1deg);
   }
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+}
+
+/* Premium Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-brand-peach);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-brand-peach-dark);
+}
+
+/* Custom Glassmorphism class */
+.glass-panel {
+  background: rgba(253, 251, 249, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(232, 197, 175, 0.2);
+}
+
+.glass-panel-dark {
+  background: rgba(5, 22, 46, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(197, 168, 128, 0.15);
+}
+
+/* Elegant gold divider styling */
+.gold-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-brand-gold), transparent);
+}
+
+/* Page entrance transitions */
+.fade-in-up {
+  opacity: 0;
+  animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.delay-100 {
+  animation-delay: 100ms;
+}
+.delay-200 {
+  animation-delay: 200ms;
+}
+.delay-300 {
+  animation-delay: 300ms;
+}
+.delay-400 {
+  animation-delay: 400ms;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
