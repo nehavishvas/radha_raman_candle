@@ -97,11 +97,23 @@ body {
   border: 1px solid rgba(232, 197, 175, 0.2);
 }
 
+.glass-panel-luxury {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(197, 168, 128, 0.3);
+  box-shadow: 0 20px 40px -15px rgba(5, 22, 46, 0.08);
+}
+
 .glass-panel-dark {
   background: rgba(5, 22, 46, 0.88);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(197, 168, 128, 0.15);
+}
+
+.animate-floating {
+  animation: float-slow 5s infinite ease-in-out;
 }
 
 /* Elegant gold divider styling */
@@ -112,30 +124,30 @@ body {
 
 /* Page entrance transitions */
 .fade-in-up {
-  opacity: 0;
-  animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .delay-100 {
-  animation-delay: 100ms;
+  animation-delay: 80ms;
 }
 .delay-200 {
-  animation-delay: 200ms;
+  animation-delay: 160ms;
 }
 .delay-300 {
-  animation-delay: 300ms;
+  animation-delay: 240ms;
 }
 .delay-400 {
-  animation-delay: 400ms;
+  animation-delay: 320ms;
 }
 
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(12px);
   }
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
+

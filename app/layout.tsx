@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Cormorant_Garamond, Inter } from "next/font/google";
 import "./globals.css";
 import { StoreProvider } from "./store/provider";
+import ClientShell from "./components/client-shell";
 
 const cormorant = Cormorant_Garamond({
   variable: "--font-serif",
@@ -18,6 +19,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://radharaman-candles.com"),
   title: "Radharaman Luxury Candles | Illuminate Every Moment",
   description: "Exquisite hand-poured soy candles infused with rare essential oils. Explore Vrindavan Jasmine, Mystic Oudh, Himalayan Cedar, and more in our premium collection.",
   keywords: "luxury candles, soy wax candles, jasmine candle, oudh candle, cedarwood candle, aromatherapy, handmade gifts",
@@ -38,11 +40,14 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`${cormorant.variable} ${inter.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-brand-cream/20 text-brand-charcoal">
+      <body suppressHydrationWarning className="min-h-full flex flex-col bg-brand-cream/20 text-brand-charcoal">
         <StoreProvider>
-          {children}
+          <ClientShell>
+            {children}
+          </ClientShell>
         </StoreProvider>
       </body>
     </html>

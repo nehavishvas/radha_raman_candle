@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import Image from "next/image";
 import { X, Trash2, Tag, ShoppingBag, ArrowRight } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
@@ -220,14 +221,23 @@ export default function CartSidebar({ onCheckout, onRequireLogin }: CartSidebarP
                 </div>
               </div>
 
-              {/* Checkout Button */}
-              <button
-                onClick={handleCheckoutClick}
-                className="w-full flex items-center justify-center gap-2 py-3 bg-brand-charcoal hover:bg-brand-gold hover:text-brand-charcoal text-white rounded-full text-xs font-bold tracking-widest uppercase transition-all duration-300 shadow-md"
-              >
-                <span>Proceed to Checkout</span>
-                <ArrowRight size={14} />
-              </button>
+              {/* Cart Page Link & Checkout Button */}
+              <div className="flex flex-col gap-2">
+                <button
+                  onClick={handleCheckoutClick}
+                  className="w-full flex items-center justify-center gap-2 py-3 bg-brand-charcoal hover:bg-brand-gold hover:text-brand-charcoal text-white rounded-full text-xs font-bold tracking-widest uppercase transition-all duration-300 shadow-md cursor-pointer"
+                >
+                  <span>Proceed to Checkout</span>
+                  <ArrowRight size={14} />
+                </button>
+                <Link
+                  href="/cart"
+                  onClick={() => dispatch(setCartOpen(false))}
+                  className="w-full text-center py-2 text-xs font-semibold text-brand-charcoal hover:text-brand-gold underline transition-colors"
+                >
+                  View Full Cart & Shipping Calculator
+                </Link>
+              </div>
               
               <p className="text-[9px] text-center text-brand-charcoal/50">
                 Tax calculated at checkout. Complimentary luxury gift boxing included.

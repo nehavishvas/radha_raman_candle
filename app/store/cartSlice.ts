@@ -15,6 +15,9 @@ interface CartState {
   isCartOpen: boolean;
   isLoggedIn: boolean;
   user: { name: string; email: string } | null;
+  isLoginOpen: boolean;
+  loginMessage: string;
+  isCheckoutOpen: boolean;
 }
 
 const initialState: CartState = {
@@ -22,6 +25,9 @@ const initialState: CartState = {
   isCartOpen: false,
   isLoggedIn: false,
   user: null,
+  isLoginOpen: false,
+  loginMessage: "",
+  isCheckoutOpen: false,
 };
 
 const cartSlice = createSlice({
@@ -106,6 +112,20 @@ const cartSlice = createSlice({
         localStorage.removeItem("radharaman_user");
       }
     },
+    openLoginModal: (state, action: PayloadAction<string | undefined>) => {
+      state.isLoginOpen = true;
+      state.loginMessage = action.payload || "";
+    },
+    closeLoginModal: (state) => {
+      state.isLoginOpen = false;
+      state.loginMessage = "";
+    },
+    openCheckoutModal: (state) => {
+      state.isCheckoutOpen = true;
+    },
+    closeCheckoutModal: (state) => {
+      state.isCheckoutOpen = false;
+    },
   },
 });
 
@@ -119,6 +139,10 @@ export const {
   setCartOpen,
   login,
   logout,
+  openLoginModal,
+  closeLoginModal,
+  openCheckoutModal,
+  closeCheckoutModal,
 } = cartSlice.actions;
 
 export default cartSlice.reducer;

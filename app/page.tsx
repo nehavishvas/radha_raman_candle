@@ -1,69 +1,87 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import Image from "next/image";
-import { Sparkles, Leaf, Flame, Shield, ArrowRight, Check, Send, Star, ChevronLeft, ChevronRight } from "lucide-react";
-import Header from "./components/header";
+import Link from "next/link";
+import { 
+  Sparkles, 
+  Leaf, 
+  Flame, 
+  Shield, 
+  ArrowRight, 
+  Check, 
+  Send, 
+  Star, 
+  ChevronLeft, 
+  ChevronRight,
+  Layers,
+  Compass
+} from "lucide-react";
 import ProductCard from "./components/product-card";
 import ProductDetailModal from "./components/product-detail-modal";
-import CartSidebar from "./components/cart-sidebar";
-import FragranceQuiz from "./components/fragrance-quiz";
-import CheckoutModal from "./components/checkout-modal";
-import LoginModal from "./components/login-modal";
-import { products, Product } from "./data/products";
+import { products, Product, CATEGORIES } from "./data/products";
 
 const heroSlides = [
   {
-    subtitle: "Illuminate Every Moment",
+    subtitle: "Sacred Artisanal Edition",
     title: "Vrindavan Jasmine",
-    description: "An enchanting olfactory journey to the sacred groves. Hand-poured with night-blooming jasmine blossoms, golden saffron, and warm sandalwood.",
+    poeticTag: "Night-Blooming Serenity",
+    description: "An enchanting olfactory journey to the sacred groves of Braj. Hand-poured with night-blooming jasmine blossoms, Kashmiri saffron, and warm Mysore sandalwood.",
     image: "/jasmine_candle.png",
     productId: "vrindavan-jasmine",
-    bgGradient: "from-[#061830] via-[#0d2a4a] to-[#081d33]",
+    notes: ["Night Jasmine", "Kashmiri Saffron", "Mysore Sandalwood"],
+    price: 36,
+    burnTime: "60 Hours",
+    wick: "Organic Cotton Wick",
+    rating: 4.9,
+    reviews: 142,
   },
   {
     subtitle: "Meditative Warmth",
     title: "Mystic Oudh",
-    description: "A deep, warm, and meditative blend featuring precious agarwood (Oudh), balanced masterfully with golden amber and rich, smoky vanilla.",
+    poeticTag: "Smoky Golden Resins",
+    description: "A deep, contemplative blend featuring wild-harvested Assam agarwood (Oudh), balanced masterfully with dark golden amber and smoky bourbon vanilla.",
     image: "/oudh_candle.png",
     productId: "mystic-oudh",
-    bgGradient: "from-[#06080c] via-[#121620] to-[#090b10]",
+    notes: ["Assam Agarwood", "Golden Amber", "Bourbon Vanilla"],
+    price: 42,
+    burnTime: "60 Hours",
+    wick: "Crackling Wooden Wick",
+    rating: 4.8,
+    reviews: 98,
   },
   {
     subtitle: "Crisp Mountain Vitality",
     title: "Himalayan Cedar",
-    description: "Evoke the clean, fresh air of pine forests. A calming combination of wild Himalayan pine needles, robust cedarwood bark, and wild honey.",
+    poeticTag: "Subalpine Forest Air",
+    description: "Evoke the clean, fresh air of pine forests. A restorative combination of wild pine needle terpenes, Deodar cedarwood bark, and wild honey.",
     image: "/cedar_candle.png",
     productId: "himalayan-cedar",
-    bgGradient: "from-[#021114] via-[#0a282c] to-[#04161a]",
+    notes: ["Himalayan Pine", "Deodar Cedar", "Wild Honey"],
+    price: 34,
+    burnTime: "55 Hours",
+    wick: "Crackling Wooden Wick",
+    rating: 4.7,
+    reviews: 76,
   },
   {
     subtitle: "Majestic Imperial Gardens",
     title: "Rose & Cardamom",
-    description: "A majestic fusion of delicate damask rose petals, accented by the warming aroma of fresh cardamom and finished with clean white musk.",
+    poeticTag: "Royal Botanical Harmony",
+    description: "A majestic fusion inspired by classic imperial perfumery. Delicate Kannauj damask rose petals accented by warming green cardamom and soft cashmere musk.",
     image: "/rose_candle.png",
     productId: "rose-cardamom",
-    bgGradient: "from-[#11060b] via-[#22101b] to-[#150a11]",
+    notes: ["Kannauj Damask Rose", "Green Cardamom", "White Tea"],
+    price: 38,
+    burnTime: "60 Hours",
+    wick: "Organic Cotton Wick",
+    rating: 4.9,
+    reviews: 114,
   }
 ];
 
 export default function Home() {
-  const [searchQuery, setSearchQuery] = useState("");
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
-  const [newsletterEmail, setNewsletterEmail] = useState("");
-  const [newsletterSubscribed, setNewsletterSubscribed] = useState(false);
-  
-  // Login States
-  const [isLoginOpen, setIsLoginOpen] = useState(false);
-  const [loginMessage, setLoginMessage] = useState("");
-
-  const handleRequireLogin = (msg: string) => {
-    setLoginMessage(msg);
-    setIsLoginOpen(true);
-  };
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -72,479 +90,596 @@ export default function Home() {
     return () => clearInterval(timer);
   }, []);
 
-  // Filter products by search and category
-  const filteredProducts = products.filter((product) => {
-    const matchesSearch =
-      product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      product.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      product.fragranceNotes.top.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      product.fragranceNotes.middle.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      product.fragranceNotes.base.toLowerCase().includes(searchQuery.toLowerCase());
-
-    const matchesCategory =
-      selectedCategory === "all" || product.category === selectedCategory;
-
-    return matchesSearch && matchesCategory;
-  });
-
-  const scrollToSection = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-    }
-  };
-
-  const handleNewsletterSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (newsletterEmail.trim()) {
-      setNewsletterSubscribed(true);
-      setNewsletterEmail("");
-      setTimeout(() => setNewsletterSubscribed(false), 4000);
-    }
-  };
+  const featuredCandles = products.filter((p) => p.featured || p.isBestSeller).slice(0, 6);
 
   return (
     <div className="flex-1 flex flex-col min-h-screen">
-      {/* Navigation Header */}
-      <Header
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-        scrollToSection={scrollToSection}
-        onLoginClick={() => handleRequireLogin("Log in to access your private VIP sanctuary account.")}
-      />
+      
+      {/* ========================================================= */}
+      {/* HERO BANNER SECTION (Light Luxury Background with Animation) */}
+      {/* ========================================================= */}
+      <section className="relative overflow-hidden bg-[#faf8f5] text-brand-charcoal border-b border-brand-peach/20 min-h-[580px] lg:min-h-[620px] flex flex-col justify-between pt-6 sm:pt-10 pb-5">
+        
+        {/* Soft Luxury Light Ambient Illumination Layers */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_40%,rgba(232,197,175,0.45),transparent_55%)] pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_25%,rgba(197,168,128,0.25),transparent_50%)] pointer-events-none" />
+        <div className="absolute top-0 right-1/4 w-96 h-96 bg-brand-peach-light/40 rounded-full blur-3xl pointer-events-none -z-0" />
+        <div className="absolute bottom-0 inset-x-0 h-16 bg-gradient-to-t from-white/60 to-transparent pointer-events-none" />
 
-      <main className="flex-1 flex flex-col">
-        {/* HERO SLIDER SECTION */}
-        <section className={`relative overflow-hidden text-white py-20 sm:py-28 border-b border-brand-gold/15 min-h-[550px] flex items-center bg-gradient-to-r ${heroSlides[currentSlide].bgGradient} transition-all duration-1000`}>
-          {/* Background overlay and glow */}
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(232,197,175,0.12),transparent_45%)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(0,93,158,0.1),transparent_40%)]" />
+        {/* Top/Side Navigation Arrows */}
+        <button
+          onClick={() => setCurrentSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length)}
+          className="absolute left-4 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full border border-brand-peach/30 hover:border-brand-gold bg-white/80 hover:bg-white text-brand-charcoal hover:text-brand-gold-dark transition-all cursor-pointer hidden md:flex items-center justify-center shadow-md backdrop-blur-xs"
+          aria-label="Previous Slide"
+        >
+          <ChevronLeft size={22} />
+        </button>
+        <button
+          onClick={() => setCurrentSlide((prev) => (prev + 1) % heroSlides.length)}
+          className="absolute right-4 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full border border-brand-peach/30 hover:border-brand-gold bg-white/80 hover:bg-white text-brand-charcoal hover:text-brand-gold-dark transition-all cursor-pointer hidden md:flex items-center justify-center shadow-md backdrop-blur-xs"
+          aria-label="Next Slide"
+        >
+          <ChevronRight size={22} />
+        </button>
 
-          {/* Navigation Arrows */}
-          <button
-            onClick={() => setCurrentSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length)}
-            className="absolute left-4 z-20 p-2.5 rounded-full border border-white/10 hover:border-brand-peach/40 bg-black/20 hover:bg-brand-charcoal/80 text-white hover:text-brand-peach transition-all cursor-pointer hidden md:block"
-            aria-label="Previous Slide"
-          >
-            <ChevronLeft size={20} />
-          </button>
-          <button
-            onClick={() => setCurrentSlide((prev) => (prev + 1) % heroSlides.length)}
-            className="absolute right-4 z-20 p-2.5 rounded-full border border-white/10 hover:border-brand-peach/40 bg-black/20 hover:bg-brand-charcoal/80 text-white hover:text-brand-peach transition-all cursor-pointer hidden md:block"
-            aria-label="Next Slide"
-          >
-            <ChevronRight size={20} />
-          </button>
+        {/* Main Content Area */}
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10 w-full flex-1 flex items-center">
+          {heroSlides.map((slide, index) => {
+            if (index !== currentSlide) return null;
 
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10 w-full">
-            {/* Slide Loop */}
-            {heroSlides.map((slide, index) => {
-              if (index !== currentSlide) return null;
+            return (
+              <div key={index} className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 xl:gap-12 items-center w-full py-2 sm:py-4">
 
-              return (
-                <div key={index} className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-
-                  {/* Left Content (Animated Text) */}
-                  <div className="lg:col-span-7 flex flex-col items-center lg:items-start text-center lg:text-left space-y-6">
-                    <span className="text-xs sm:text-sm font-bold uppercase tracking-[0.3em] text-brand-peach fade-in-up">
-                      {slide.subtitle}
-                    </span>
-
-                    <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight tracking-wide text-brand-cream fade-in-up delay-100">
-                      {slide.title}
-                    </h1>
-
-                    <p className="max-w-xl text-sm sm:text-base text-brand-cream/70 leading-relaxed font-light fade-in-up delay-200">
-                      {slide.description}
-                    </p>
-
-                    <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto pt-2 fade-in-up delay-300">
-                      <button
-                        onClick={() => {
-                          const prod = products.find(p => p.id === slide.productId);
-                          if (prod) setSelectedProduct(prod);
-                        }}
-                        className="px-8 py-3.5 bg-brand-peach text-brand-charcoal hover:bg-brand-cream transition-all duration-300 rounded-full text-xs font-bold tracking-widest uppercase shadow-lg shadow-brand-peach/10 cursor-pointer"
-                      >
-                        Quick View Details
-                      </button>
-                      <button
-                        onClick={() => scrollToSection("collection")}
-                        className="px-8 py-3.5 border border-brand-peach/40 text-brand-peach hover:border-brand-cream hover:text-white transition-all duration-300 rounded-full text-xs font-bold tracking-widest uppercase flex items-center justify-center gap-1.5 cursor-pointer"
-                      >
-                        <span>Explore Collection</span>
-                        <ArrowRight size={13} />
-                      </button>
-                    </div>
+                {/* Left Column: Editorial & CTA */}
+                <div className="lg:col-span-5 flex flex-col items-center lg:items-start text-center lg:text-left space-y-4 sm:space-y-5 z-10">
+                  
+                  {/* Top Pill Tag with Subtle Gold Shimmer */}
+                  <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-gold/15 border border-brand-gold/40 text-brand-gold-dark text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.25em] shadow-xs fade-in-up">
+                    <Sparkles size={13} className="text-brand-gold animate-pulse" />
+                    <span>{slide.subtitle}</span>
                   </div>
 
-                  {/* Right Content (Animated Image Card) */}
-                  <div className="lg:col-span-5 flex justify-center items-center relative scale-95 md:scale-100 fade-in-up delay-100 mx-auto w-full max-w-[400px]">
-                    {/* Glowing background aura */}
-                    <div className="absolute inset-0 bg-gradient-to-tr from-brand-peach/30 to-brand-blue/20 rounded-2xl blur-2xl -z-10 animate-pulse" />
+                  {/* Title & Poetic Accent */}
+                  <div className="space-y-1 fade-in-up delay-100">
+                    <h1 className="font-serif text-4xl sm:text-5xl lg:text-5xl xl:text-6xl font-bold leading-[1.08] tracking-tight text-brand-charcoal">
+                      {slide.title}
+                    </h1>
+                    <p className="font-serif italic text-base sm:text-lg text-brand-gold-dark font-medium">
+                      {slide.poeticTag}
+                    </p>
+                  </div>
 
-                    {/* Main Image Container */}
-                    <div className="relative w-full aspect-square rounded-2xl overflow-hidden border border-brand-gold/30 shadow-2xl bg-brand-charcoal/20 backdrop-blur-xs flex items-center justify-center group">
+                  {/* Evocative Description */}
+                  <p className="max-w-md text-xs sm:text-sm text-brand-charcoal/75 leading-relaxed font-light fade-in-up delay-200">
+                    {slide.description}
+                  </p>
+
+                  {/* Scent Notes Badges */}
+                  <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2 pt-1 fade-in-up delay-200">
+                    <span className="text-[10px] uppercase font-bold tracking-wider text-brand-gold-dark mr-1">
+                      Key Notes:
+                    </span>
+                    {slide.notes.map((note, nIdx) => (
+                      <span
+                        key={nIdx}
+                        className="text-[11px] px-3.5 py-1 rounded-full bg-white/90 border border-brand-peach/35 text-brand-charcoal font-medium shadow-xs"
+                      >
+                        {note}
+                      </span>
+                    ))}
+                  </div>
+
+                  {/* Micro Specs strip */}
+                  <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3 sm:gap-4 text-[11px] text-brand-charcoal/65 font-medium pt-1 fade-in-up delay-200">
+                    <span className="flex items-center gap-1.5">
+                      <Flame size={14} className="text-brand-gold" />
+                      <span>{slide.burnTime} Clean Burn</span>
+                    </span>
+                    <span>•</span>
+                    <span className="flex items-center gap-1.5">
+                      <Leaf size={14} className="text-brand-gold" />
+                      <span>100% Pure Soy Wax</span>
+                    </span>
+                    <span>•</span>
+                    <span className="flex items-center gap-1.5 text-amber-600">
+                      <Star size={13} fill="currentColor" />
+                      <span>{slide.rating} ({slide.reviews})</span>
+                    </span>
+                  </div>
+
+                  {/* Primary & Secondary Action CTAs */}
+                  <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto pt-2 fade-in-up delay-300">
+                    <Link
+                      href={`/shop/${slide.productId}`}
+                      className="px-7 py-3.5 bg-brand-charcoal hover:bg-brand-gold hover:text-brand-charcoal text-white transition-all duration-300 rounded-full text-xs font-bold tracking-widest uppercase shadow-xl shadow-brand-charcoal/15 text-center flex items-center justify-center gap-2 group cursor-pointer hover:-translate-y-0.5"
+                    >
+                      <span>Explore Candle — ${slide.price}.00</span>
+                      <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                    </Link>
+                    <Link
+                      href="/shop"
+                      className="px-6 py-3.5 border border-brand-peach/40 bg-white/80 hover:bg-white hover:border-brand-gold text-brand-charcoal transition-all duration-300 rounded-full text-xs font-bold tracking-widest uppercase flex items-center justify-center gap-1.5 text-center shadow-xs cursor-pointer hover:-translate-y-0.5"
+                    >
+                      <span>Browse Shop</span>
+                    </Link>
+                  </div>
+
+                </div>
+
+                {/* Right Column: Expansive, Grand Candle Showcase with Natural Proportions */}
+                <div className="lg:col-span-7 flex justify-center items-center relative fade-in-up delay-100 w-full">
+                  
+                  {/* Subtle Candlelight Ambient Halo (Pulsing gently behind the canvas) */}
+                  <div className="absolute inset-2 bg-gradient-to-tr from-amber-300/35 via-brand-peach/30 to-orange-200/25 rounded-[2.5rem] blur-3xl -z-10 animate-pulse pointer-events-none scale-105" />
+
+                  {/* Floating Large Editorial Showcase */}
+                  <div className="relative w-full max-w-[620px] lg:max-w-none h-[360px] sm:h-[420px] md:h-[460px] lg:h-[490px] xl:h-[530px] animate-floating flex items-center justify-center">
+                    <Link 
+                      href={`/shop/${slide.productId}`}
+                      className="relative w-full h-full rounded-2xl sm:rounded-3xl lg:rounded-[2.5rem] overflow-hidden shadow-[0_25px_60px_-15px_rgba(5,22,46,0.16)] ring-1 ring-black/5 border border-brand-peach/40 hover:border-brand-gold/60 transition-all duration-700 group cursor-pointer block bg-stone-100"
+                    >
                       <img
                         src={slide.image}
                         alt={slide.title}
-                        className="object-cover w-full h-full scale-100 transition-transform duration-700 ease-out group-hover:scale-105"
+                        className="w-full h-full object-cover object-center scale-100 group-hover:scale-104 transition-transform duration-1000 ease-out"
                       />
-                      {/* Top Overlay Badge */}
-                      <div className="absolute top-4 left-4 bg-brand-charcoal/85 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold tracking-widest text-brand-peach uppercase border border-brand-peach/25 shadow-md">
-                        100% Hand-Poured
+
+                      {/* Subtle cinematic gradient vignette for depth */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity pointer-events-none" />
+
+                      {/* Top Right Floating Badge */}
+                      <div className="absolute top-4 right-4 sm:top-5 sm:right-5 bg-brand-charcoal/90 backdrop-blur-md text-white px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs font-bold tracking-wider shadow-xl flex items-center gap-2 border border-brand-gold/40">
+                        <span className="text-brand-peach font-extrabold text-sm sm:text-base">${slide.price}.00</span>
+                        <span className="text-white/40 text-[10px]">|</span>
+                        <div className="flex items-center gap-1 text-amber-400">
+                          <Star size={11} fill="currentColor" />
+                          <span className="text-white text-xs">{slide.rating}</span>
+                        </div>
+                      </div>
+
+                      {/* Bottom Right Discover Action */}
+                      <div className="absolute bottom-4 right-4 sm:bottom-6 sm:right-6 bg-white/95 backdrop-blur-md text-brand-charcoal px-4 py-2 rounded-full text-xs font-bold shadow-lg flex items-center gap-2 border border-brand-peach/30 group-hover:bg-brand-charcoal group-hover:text-white transition-all">
+                        <span>Discover Notes & Details</span>
+                        <ArrowRight size={13} className="text-brand-gold group-hover:translate-x-1 transition-transform" />
+                      </div>
+                    </Link>
+
+                    {/* Left Bottom Floating Art Label (Non-obstructive luxury placard) */}
+                    <div className="absolute -bottom-3 sm:-bottom-5 -left-2 sm:-left-6 bg-white/95 backdrop-blur-md px-4 sm:px-5 py-2.5 sm:py-3 rounded-2xl shadow-xl border border-brand-peach/35 flex items-center gap-3 z-20 pointer-events-none hidden sm:flex">
+                      <div className="h-9 w-9 sm:h-10 sm:w-10 rounded-xl bg-brand-gold/15 flex items-center justify-center text-brand-gold-dark shrink-0">
+                        <Flame size={18} className="text-brand-gold animate-pulse" />
+                      </div>
+                      <div className="text-left">
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-[10px] uppercase font-bold tracking-widest text-brand-gold-dark">Vrindavan Artisanal</span>
+                          <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                        </div>
+                        <p className="text-xs font-bold text-brand-charcoal">{slide.burnTime} • {slide.wick}</p>
                       </div>
                     </div>
+
                   </div>
 
                 </div>
-              );
-            })}
 
-            {/* Slide indicators dots */}
-            <div className="flex justify-center gap-2 mt-8 md:mt-12">
-              {heroSlides.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentSlide(index)}
-                  className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${index === currentSlide ? "w-6 bg-brand-peach" : "w-1.5 bg-brand-peach/30 hover:bg-brand-peach/60"
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Bottom Interactive Slide Selector Bar */}
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10 w-full pt-4">
+          <div className="border-t border-brand-peach/25 pt-4 flex flex-wrap items-center justify-between gap-3">
+            
+            {/* Direct Thumbnail Pills */}
+            <div className="flex flex-wrap items-center gap-2">
+              {heroSlides.map((slide, index) => {
+                const isActive = index === currentSlide;
+                return (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentSlide(index)}
+                    className={`relative overflow-hidden flex items-center gap-2.5 px-3.5 sm:px-4 py-2 rounded-full text-xs font-semibold tracking-wide transition-all duration-300 cursor-pointer ${
+                      isActive
+                        ? "bg-brand-charcoal text-white font-bold shadow-md scale-102"
+                        : "bg-white/80 border border-brand-peach/30 text-brand-charcoal/70 hover:bg-white hover:text-brand-charcoal hover:border-brand-gold"
                     }`}
-                  aria-label={`Go to slide ${index + 1}`}
-                />
-              ))}
+                  >
+                    <img 
+                      src={slide.image} 
+                      alt="" 
+                      className="w-5 h-5 rounded-full object-cover shrink-0 ring-1 ring-brand-peach/40"
+                    />
+                    <span>{slide.title}</span>
+                    {isActive && (
+                      <span className="h-1.5 w-1.5 rounded-full bg-brand-gold animate-pulse ml-0.5" />
+                    )}
+                  </button>
+                );
+              })}
             </div>
 
-          </div>
-        </section>
+            {/* Quick Scent Quiz Link */}
+            <Link
+              href="/quiz"
+              className="text-xs font-semibold text-brand-charcoal hover:text-brand-gold-dark flex items-center gap-1.5 transition-colors"
+            >
+              <span>Take Scent Finder Quiz</span>
+              <Sparkles size={13} className="text-brand-gold" />
+            </Link>
 
-        {/* VALUE PROPOSITIONS */}
-        <section className="bg-brand-cream py-10 border-b border-brand-peach/10">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center text-brand-charcoal">
-
-              <div className="flex flex-col items-center space-y-2 p-3">
-                <div className="p-3 bg-brand-peach/10 text-brand-gold rounded-full">
-                  <Leaf size={20} className="stroke-[1.5]" />
-                </div>
-                <span className="font-serif text-sm font-bold">100% Soy Wax</span>
-                <span className="text-[10px] text-brand-charcoal/60">Toxin-free, renewable burn</span>
-              </div>
-
-              <div className="flex flex-col items-center space-y-2 p-3">
-                <div className="p-3 bg-brand-peach/10 text-brand-gold rounded-full">
-                  <Flame size={20} className="stroke-[1.5]" />
-                </div>
-                <span className="font-serif text-sm font-bold">60-Hour Clean Burn</span>
-                <span className="text-[10px] text-brand-charcoal/60">Slow, long-lasting aroma</span>
-              </div>
-
-              <div className="flex flex-col items-center space-y-2 p-3">
-                <div className="p-3 bg-brand-peach/10 text-brand-gold rounded-full">
-                  <Sparkles size={20} className="stroke-[1.5]" />
-                </div>
-                <span className="font-serif text-sm font-bold">Rare Essential Oils</span>
-                <span className="text-[10px] text-brand-charcoal/60">Hand-curated scent layers</span>
-              </div>
-
-              <div className="flex flex-col items-center space-y-2 p-3">
-                <div className="p-3 bg-brand-peach/10 text-brand-gold rounded-full">
-                  <Shield size={20} className="stroke-[1.5]" />
-                </div>
-                <span className="font-serif text-sm font-bold">Hand-Poured Quality</span>
-                <span className="text-[10px] text-brand-charcoal/60">Rigorous small-batch focus</span>
-              </div>
-
-            </div>
-          </div>
-        </section>
-
-        {/* PRODUCTS CATALOG SECTION */}
-        <section id="collection" className="scroll-mt-24 py-16 sm:py-24 bg-brand-cream/15 text-brand-charcoal">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-12">
-
-            {/* Header */}
-            <div className="text-center space-y-3">
-              <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-brand-gold">
-                The Artisanal Selection
-              </span>
-              <h2 className="font-serif text-3xl sm:text-4xl font-bold">
-                Shop Our Fragrance Collection
-              </h2>
-              <div className="gold-divider mx-auto w-32" />
-            </div>
-
-            {/* Category Filter Pills */}
-            <div className="flex flex-wrap justify-center gap-2 text-xs">
-              {[
-                { label: "All Scent Profiles", id: "all" },
-                { label: "Scented", id: "scented" },
-                { label: "Soy Wax Base", id: "soy-wax" },
-                { label: "Aromatherapy", id: "aromatherapy" },
-                { label: "Artisanal Shapes", id: "artisanal-shapes" },
-                { label: "Curated Sets", id: "gift-sets" }
-              ].map((cat) => (
-                <button
-                  key={cat.id}
-                  onClick={() => setSelectedCategory(cat.id)}
-                  className={`px-5 py-2.5 rounded-full border transition-all duration-300 font-semibold tracking-wide ${selectedCategory === cat.id
-                      ? "bg-brand-charcoal text-white border-brand-charcoal shadow-sm scale-102"
-                      : "bg-white text-brand-charcoal/70 border-brand-peach/25 hover:border-brand-gold hover:text-brand-charcoal"
-                    }`}
-                >
-                  {cat.label}
-                </button>
-              ))}
-            </div>
-
-            {/* Live Search status */}
-            {searchQuery && (
-              <p className="text-xs text-center text-brand-charcoal/60 italic">
-                Showing results for &ldquo;{searchQuery}&rdquo; ({filteredProducts.length} items found)
-              </p>
-            )}
-
-            {/* Product Cards Grid */}
-            {filteredProducts.length === 0 ? (
-              <div className="text-center py-20 bg-brand-cream/30 border border-dashed border-brand-peach/20 rounded-2xl">
-                <p className="text-sm font-semibold text-brand-charcoal/60">No candles match your criteria.</p>
-                <button
-                  onClick={() => {
-                    setSearchQuery("");
-                    setSelectedCategory("all");
-                  }}
-                  className="mt-4 px-5 py-2 bg-brand-charcoal text-white rounded-full text-xs font-semibold"
-                >
-                  Reset Filters
-                </button>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-                {filteredProducts.map((product) => (
-                  <ProductCard
-                    key={product.id}
-                    product={product}
-                    onQuickView={setSelectedProduct}
-                    onRequireLogin={handleRequireLogin}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
-        </section>
-
-        {/* INTERACTIVE SCENT FINDER QUIZ SECTION */}
-        <section className="py-16 sm:py-20 bg-brand-cream/30 border-t border-b border-brand-peach/10">
-          <div className="mx-auto max-w-4xl px-4 sm:px-6">
-            <div className="text-center space-y-3 mb-10">
-              <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-brand-gold">
-                Sensory Matchmaker
-              </span>
-              <h2 className="font-serif text-3xl font-bold">
-                Find Your Signature Candle
-              </h2>
-              <p className="text-xs text-brand-charcoal/60 max-w-sm mx-auto">
-                Answer three simple sensory questions to reveal the candle tailored to your mood and aesthetic preferences.
-              </p>
-              <div className="gold-divider mx-auto w-24" />
-            </div>
-
-            <FragranceQuiz onQuickView={setSelectedProduct} />
-          </div>
-        </section>
-
-        {/* BRAND HERITAGE SECTION */}
-        <section id="our-story" className="scroll-mt-24 py-16 sm:py-24 bg-brand-charcoal text-white relative overflow-hidden">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(232,197,175,0.07),transparent_50%)]" />
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-
-              {/* Image Grid */}
-              <div className="relative aspect-video lg:aspect-square w-full rounded-2xl overflow-hidden border border-brand-gold/25 shadow-xl bg-brand-cream/5 min-h-[300px]">
-                <img
-                  src="/gift_set.png"
-                  alt="Radharaman Candles Heritage Crafting"
-                  className="object-cover w-full h-full opacity-90"
-                />
-              </div>
-
-              {/* Text */}
-              <div className="space-y-6 flex flex-col justify-center">
-                <span className="text-xs font-bold uppercase tracking-[0.3em] text-brand-peach">Our Heritage</span>
-                <h2 className="font-serif text-3xl sm:text-4xl font-bold text-brand-cream">
-                  Crafted by Hand, Guided by Tradition
-                </h2>
-                <div className="h-0.5 w-16 bg-brand-gold" />
-
-                <p className="text-xs sm:text-sm text-brand-cream/70 leading-relaxed font-light">
-                  The name **Radharaman** is an ode to timeless beauty, grace, and spiritual light. Every single candle is hand-poured in small, custom batches inside our boutique workshop. We combine pure, food-grade soybean waxes with natural essential oils sourced sustainably from their geographic origins.
-                </p>
-
-                <p className="text-xs sm:text-sm text-brand-cream/70 leading-relaxed font-light">
-                  From the calming cedar of the high Himalayas to the night-blooming jasmines of ancient gardens, we formulate fragrance oils that burn cleanly, leave a gentle throwing scent, and respect the air you breathe. Experience design that elevates and scent that restores.
-                </p>
-
-                <div className="pt-2">
-                  <div className="flex items-center gap-3 text-xs text-brand-peach font-bold italic">
-                    <span>— Hand-Poured with Love & Devotion</span>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-          </div>
-        </section>
-
-        {/* TESTIMONIALS / CUSTOMER REVIEW CAROUSEL */}
-        <section className="py-16 sm:py-24 bg-brand-cream/15 text-brand-charcoal border-b border-brand-peach/10">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-12">
-            <div className="text-center space-y-3">
-              <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-brand-gold">Customer Stories</span>
-              <h2 className="font-serif text-3xl font-bold">Whispers of Devotion</h2>
-              <div className="gold-divider mx-auto w-24" />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-
-              <div className="p-6 bg-white rounded-2xl border border-brand-peach/15 shadow-sm space-y-4 hover:border-brand-gold/40 transition-colors duration-300">
-                <div className="flex text-amber-500">
-                  {Array.from({ length: 5 }).map((_, i) => <Star key={i} size={13} fill="currentColor" />)}
-                </div>
-                <p className="text-xs text-brand-charcoal/75 leading-relaxed italic">
-                  &ldquo;The Vrindavan Jasmine candle is absolutely magical. The throw is gentle yet fills my entire living space with the exact aroma of blooming night jasmines. Hands down the highest quality candle I own.&rdquo;
-                </p>
-                <div className="border-t border-brand-peach/10 pt-3">
-                  <span className="text-xs font-bold block text-brand-charcoal">Aishwarya R.</span>
-                  <span className="text-[9px] text-brand-charcoal/50 block">Verified Purchaser</span>
-                </div>
-              </div>
-
-              <div className="p-6 bg-white rounded-2xl border border-brand-peach/15 shadow-sm space-y-4 hover:border-brand-gold/40 transition-colors duration-300">
-                <div className="flex text-amber-500">
-                  {Array.from({ length: 5 }).map((_, i) => <Star key={i} size={13} fill="currentColor" />)}
-                </div>
-                <p className="text-xs text-brand-charcoal/75 leading-relaxed italic">
-                  &ldquo;Mystic Oudh has completely changed my meditation routine. It has a beautiful grounding quality that is rich, deep, and not artificial at all. The wooden wick crackles softly, which is incredibly soothing.&rdquo;
-                </p>
-                <div className="border-t border-brand-peach/10 pt-3">
-                  <span className="text-xs font-bold block text-brand-charcoal">Vikram K.</span>
-                  <span className="text-[9px] text-brand-charcoal/50 block">Verified Purchaser</span>
-                </div>
-              </div>
-
-              <div className="p-6 bg-white rounded-2xl border border-brand-peach/15 shadow-sm space-y-4 hover:border-brand-gold/40 transition-colors duration-300">
-                <div className="flex text-amber-500">
-                  {Array.from({ length: 5 }).map((_, i) => <Star key={i} size={13} fill="currentColor" />)}
-                </div>
-                <p className="text-xs text-brand-charcoal/75 leading-relaxed italic">
-                  &ldquo;Bought the Imperial Gift Set for my mother and she was in tears. The packaging alone feels like royalty, wrapped in gold and velvet. Each mini candle burns beautifully. Will purchase again!&rdquo;
-                </p>
-                <div className="border-t border-brand-peach/10 pt-3">
-                  <span className="text-xs font-bold block text-brand-charcoal">Meera S.</span>
-                  <span className="text-[9px] text-brand-charcoal/50 block">Verified Purchaser</span>
-                </div>
-              </div>
-
-            </div>
-          </div>
-        </section>
-
-        {/* NEWSLETTER SIGNUP */}
-        <section className="py-16 sm:py-20 bg-brand-cream/40 text-brand-charcoal text-center">
-          <div className="mx-auto max-w-2xl px-4 sm:px-6 space-y-6">
-            <div className="space-y-2">
-              <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-brand-gold block">Radharaman Circle</span>
-              <h2 className="font-serif text-3xl font-bold">Unlock Access to Small Batches</h2>
-              <p className="text-xs text-brand-charcoal/65 max-w-sm mx-auto">
-                Subscribe to receive early releases of private blends, exclusive invitations, and 10% off your initial sanctuary order.
-              </p>
-            </div>
-
-            {newsletterSubscribed ? (
-              <div className="flex items-center justify-center gap-1.5 text-xs text-emerald-600 font-bold bg-emerald-50 max-w-xs mx-auto py-2.5 px-4 rounded-full border border-emerald-200">
-                <Check size={14} />
-                <span>Subscription successful! Check your inbox.</span>
-              </div>
-            ) : (
-              <form onSubmit={handleNewsletterSubmit} className="flex flex-col sm:flex-row gap-2 max-w-md mx-auto">
-                <input
-                  type="email"
-                  required
-                  placeholder="Enter email for VIP access"
-                  value={newsletterEmail}
-                  onChange={(e) => setNewsletterEmail(e.target.value)}
-                  className="flex-1 bg-white text-xs px-5 py-3 rounded-full border border-brand-peach/30 focus:outline-none focus:border-brand-gold text-brand-charcoal"
-                />
-                <button
-                  type="submit"
-                  className="px-6 py-3 bg-brand-charcoal hover:bg-brand-gold hover:text-brand-charcoal text-white rounded-full text-xs font-bold tracking-widest uppercase transition-all duration-300 flex items-center justify-center gap-1.5"
-                >
-                  <span>Join List</span>
-                  <Send size={12} />
-                </button>
-              </form>
-            )}
-          </div>
-        </section>
-      </main>
-
-      {/* FOOTER */}
-      <footer className="bg-brand-charcoal text-white/70 py-12 border-t border-brand-gold/15">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6 border-b border-white/5 pb-8 mb-8">
-
-            {/* Left Brand info */}
-            <div className="flex flex-col items-center md:items-start text-center md:text-left space-y-2">
-              <div className="flex items-center gap-2">
-                <span className="font-serif text-lg font-bold tracking-widest text-white">RADHARAMAN</span>
-                <span className="text-[8px] bg-brand-gold/20 text-brand-peach px-2 py-0.5 rounded-full uppercase tracking-wider font-semibold">Luxury Candles</span>
-              </div>
-              <p className="text-[10px] text-white/50 max-w-xs leading-relaxed">
-                Handcrafted spaces of serenity, illumination, and quiet comfort. Crafted in compliance with strict organic standards.
-              </p>
-            </div>
-
-            {/* Right Quick Links */}
-            <div className="flex gap-8 text-[11px] font-semibold uppercase tracking-wider">
-              <button onClick={() => scrollToSection("collection")} className="hover:text-brand-peach transition-colors">Shop</button>
-              <button onClick={() => scrollToSection("fragrance-quiz")} className="hover:text-brand-peach transition-colors">Quiz</button>
-              <button onClick={() => scrollToSection("our-story")} className="hover:text-brand-peach transition-colors">Story</button>
-            </div>
-
-          </div>
-
-          <div className="flex flex-col sm:flex-row justify-between items-center text-[10px] text-white/45 gap-4 text-center">
-            <span>© {new Date().getFullYear()} Radharaman Luxury Candles. All Rights Reserved.</span>
-            <div className="flex gap-4">
-              <a href="#" className="hover:text-brand-peach">Privacy Policy</a>
-              <a href="#" className="hover:text-brand-peach">Terms of Use</a>
-              <a href="#" className="hover:text-brand-peach">Shipping & Returns</a>
-            </div>
           </div>
         </div>
-      </footer>
 
-      {/* SIDEBARS & MODALS OVERLAYS */}
-      <CartSidebar 
-        onCheckout={() => setIsCheckoutOpen(true)} 
-        onRequireLogin={handleRequireLogin}
-      />
+      </section>
 
+      {/* ========================================================= */}
+      {/* VALUE PROPOSITIONS */}
+      {/* ========================================================= */}
+      <section className="bg-brand-cream/80 py-10 border-b border-brand-peach/10">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center text-brand-charcoal">
+
+            <div className="flex flex-col items-center space-y-2 p-3">
+              <div className="p-3 bg-brand-peach/15 text-brand-gold rounded-full">
+                <Leaf size={20} className="stroke-[1.5]" />
+              </div>
+              <span className="font-serif text-sm font-bold">100% Soy Wax</span>
+              <span className="text-[10px] text-brand-charcoal/60">Toxin-free, renewable burn</span>
+            </div>
+
+            <div className="flex flex-col items-center space-y-2 p-3">
+              <div className="p-3 bg-brand-peach/15 text-brand-gold rounded-full">
+                <Flame size={20} className="stroke-[1.5]" />
+              </div>
+              <span className="font-serif text-sm font-bold">60-Hour Clean Burn</span>
+              <span className="text-[10px] text-brand-charcoal/60">Slow, long-lasting aroma</span>
+            </div>
+
+            <div className="flex flex-col items-center space-y-2 p-3">
+              <div className="p-3 bg-brand-peach/15 text-brand-gold rounded-full">
+                <Sparkles size={20} className="stroke-[1.5]" />
+              </div>
+              <span className="font-serif text-sm font-bold">Rare Essential Oils</span>
+              <span className="text-[10px] text-brand-charcoal/60">Multi-layered olfactory notes</span>
+            </div>
+
+            <div className="flex flex-col items-center space-y-2 p-3">
+              <div className="p-3 bg-brand-peach/15 text-brand-gold rounded-full">
+                <Shield size={20} className="stroke-[1.5]" />
+              </div>
+              <span className="font-serif text-sm font-bold">Hand-Poured Quality</span>
+              <span className="text-[10px] text-brand-charcoal/60">Vrindavan artisan tradition</span>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* ========================================================= */}
+      {/* MULTI-PAGE SECTION SHOWCASE: EXPLORE BY COLLECTION */}
+      {/* ========================================================= */}
+      <section className="py-16 sm:py-24 bg-white border-b border-brand-peach/15">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-12">
+          
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-brand-peach/20 pb-4">
+            <div>
+              <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-brand-gold block">
+                Artisanal Categories
+              </span>
+              <h2 className="font-serif text-3xl sm:text-4xl font-bold">
+                Browse Collections by Section
+              </h2>
+            </div>
+            <Link
+              href="/shop"
+              className="text-xs font-bold text-brand-charcoal hover:text-brand-gold flex items-center gap-1.5 uppercase tracking-wider"
+            >
+              <span>Explore All Section Filters</span>
+              <ArrowRight size={13} />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            
+            {/* Category Card 1: Scented */}
+            <Link
+              href="/shop?category=scented"
+              className="group relative rounded-3xl overflow-hidden border border-brand-peach/25 bg-brand-cream/30 p-6 flex flex-col justify-between hover:shadow-xl hover:border-brand-gold/60 transition-all duration-300 min-h-[220px]"
+            >
+              <div className="space-y-2">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-brand-gold">
+                  Blossoms & Botanicals
+                </span>
+                <h3 className="font-serif text-2xl font-bold text-brand-charcoal group-hover:text-brand-gold-dark transition-colors">
+                  Scented Candles
+                </h3>
+                <p className="text-xs text-brand-charcoal/70 leading-relaxed font-light">
+                  Night-blooming jasmine, damask rose, and Kashmiri saffron for gentle, uplifting fragrance throw.
+                </p>
+              </div>
+              <div className="pt-4 flex items-center justify-between text-xs font-bold text-brand-charcoal">
+                <span className="text-brand-gold">Explore Scented →</span>
+                <span className="text-[10px] bg-brand-peach/20 px-2.5 py-0.5 rounded-full">Section 1</span>
+              </div>
+            </Link>
+
+            {/* Category Card 2: Soy Wax */}
+            <Link
+              href="/shop?category=soy-wax"
+              className="group relative rounded-3xl overflow-hidden border border-brand-peach/25 bg-brand-cream/30 p-6 flex flex-col justify-between hover:shadow-xl hover:border-brand-gold/60 transition-all duration-300 min-h-[220px]"
+            >
+              <div className="space-y-2">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-brand-gold">
+                  Pure Vegetable Bases
+                </span>
+                <h3 className="font-serif text-2xl font-bold text-brand-charcoal group-hover:text-brand-gold-dark transition-colors">
+                  Soy Wax Bases
+                </h3>
+                <p className="text-xs text-brand-charcoal/70 leading-relaxed font-light">
+                  Precious agarwood, aged sandalwood, and warm amber poured into 100% clean soy wax with wooden wicks.
+                </p>
+              </div>
+              <div className="pt-4 flex items-center justify-between text-xs font-bold text-brand-charcoal">
+                <span className="text-brand-gold">Explore Soy Wax →</span>
+                <span className="text-[10px] bg-brand-peach/20 px-2.5 py-0.5 rounded-full">Section 2</span>
+              </div>
+            </Link>
+
+            {/* Category Card 3: Aromatherapy */}
+            <Link
+              href="/shop?category=aromatherapy"
+              className="group relative rounded-3xl overflow-hidden border border-brand-peach/25 bg-brand-cream/30 p-6 flex flex-col justify-between hover:shadow-xl hover:border-brand-gold/60 transition-all duration-300 min-h-[220px]"
+            >
+              <div className="space-y-2">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-brand-gold">
+                  Wellness & Breath
+                </span>
+                <h3 className="font-serif text-2xl font-bold text-brand-charcoal group-hover:text-brand-gold-dark transition-colors">
+                  Aromatherapy
+                </h3>
+                <p className="text-xs text-brand-charcoal/70 leading-relaxed font-light">
+                  Himalayan cedar, juniper berries, pine needles, and pure essential oils formulated for deep focus.
+                </p>
+              </div>
+              <div className="pt-4 flex items-center justify-between text-xs font-bold text-brand-charcoal">
+                <span className="text-brand-gold">Explore Aromatherapy →</span>
+                <span className="text-[10px] bg-brand-peach/20 px-2.5 py-0.5 rounded-full">Section 3</span>
+              </div>
+            </Link>
+
+            {/* Category Card 4: Artisanal Shapes */}
+            <Link
+              href="/shop?category=artisanal-shapes"
+              className="group relative rounded-3xl overflow-hidden border border-brand-peach/25 bg-brand-cream/30 p-6 flex flex-col justify-between hover:shadow-xl hover:border-brand-gold/60 transition-all duration-300 min-h-[220px]"
+            >
+              <div className="space-y-2">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-brand-gold">
+                  Sculpted Statuary
+                </span>
+                <h3 className="font-serif text-2xl font-bold text-brand-charcoal group-hover:text-brand-gold-dark transition-colors">
+                  Artisanal Shapes
+                </h3>
+                <p className="text-xs text-brand-charcoal/70 leading-relaxed font-light">
+                  Hand-molded Sacred Hearts and Golden Lotuses cast in natural beeswax and soy blends.
+                </p>
+              </div>
+              <div className="pt-4 flex items-center justify-between text-xs font-bold text-brand-charcoal">
+                <span className="text-brand-gold">Explore Shapes →</span>
+                <span className="text-[10px] bg-brand-peach/20 px-2.5 py-0.5 rounded-full">Section 4</span>
+              </div>
+            </Link>
+
+            {/* Category Card 5: Curated Sets */}
+            <Link
+              href="/shop?category=gift-sets"
+              className="group relative rounded-3xl overflow-hidden border border-brand-peach/25 bg-brand-cream/30 p-6 flex flex-col justify-between hover:shadow-xl hover:border-brand-gold/60 transition-all duration-300 min-h-[220px] sm:col-span-2 lg:col-span-2"
+            >
+              <div className="space-y-2 max-w-xl">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-brand-gold">
+                  Luxury Ceremonial Presentation
+                </span>
+                <h3 className="font-serif text-2xl font-bold text-brand-charcoal group-hover:text-brand-gold-dark transition-colors">
+                  Curated Gift Sets & Trios
+                </h3>
+                <p className="text-xs text-brand-charcoal/70 leading-relaxed font-light">
+                  Presented in velvet-lined champagne gold foil presentation boxes. Designed for weddings, festive ceremonies, and heartfelt spiritual offerings.
+                </p>
+              </div>
+              <div className="pt-4 flex items-center justify-between text-xs font-bold text-brand-charcoal">
+                <span className="text-brand-gold">Explore Gift Sets →</span>
+                <span className="text-[10px] bg-brand-peach/20 px-2.5 py-0.5 rounded-full">Section 5</span>
+              </div>
+            </Link>
+
+          </div>
+
+        </div>
+      </section>
+
+      {/* ========================================================= */}
+      {/* FEATURED BEST SELLERS */}
+      {/* ========================================================= */}
+      <section className="py-16 sm:py-24 bg-brand-cream/15 text-brand-charcoal">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-12">
+          
+          <div className="text-center space-y-3">
+            <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-brand-gold">
+              Hand-Poured Favorites
+            </span>
+            <h2 className="font-serif text-3xl sm:text-4xl font-bold">
+              Cherished Sanctuary Editions
+            </h2>
+            <div className="gold-divider mx-auto w-28" />
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+            {featuredCandles.map((product) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                onQuickView={setSelectedProduct}
+              />
+            ))}
+          </div>
+
+          <div className="text-center pt-4">
+            <Link
+              href="/shop"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-brand-charcoal text-white rounded-full text-xs font-bold tracking-widest uppercase hover:bg-brand-gold hover:text-brand-charcoal transition-all duration-300 shadow-md"
+            >
+              <span>View All Candles with Section Filters</span>
+              <ArrowRight size={14} />
+            </Link>
+          </div>
+
+        </div>
+      </section>
+
+      {/* ========================================================= */}
+      {/* SENSORY SCENT QUIZ TEASER SECTION */}
+      {/* ========================================================= */}
+      <section className="py-16 sm:py-20 bg-gradient-to-r from-[#05182d] to-brand-charcoal text-white relative overflow-hidden border-t border-b border-brand-gold/20">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(197,168,128,0.1),transparent_60%)] pointer-events-none" />
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 text-center space-y-6 relative z-10">
+          <div className="p-3 bg-brand-gold/20 rounded-full w-12 h-12 mx-auto flex items-center justify-center text-brand-peach">
+            <Compass size={22} />
+          </div>
+
+          <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-brand-peach block">
+            The Sensory Matchmaker
+          </span>
+
+          <h2 className="font-serif text-3xl sm:text-4xl font-bold text-brand-cream">
+            Not Sure Which Candle Speaks to You?
+          </h2>
+
+          <p className="text-xs sm:text-sm text-brand-cream/70 max-w-lg mx-auto leading-relaxed font-light">
+            Take our 60-second interactive fragrance quiz. We analyze your desired atmosphere, room setting, and scent preferences to reveal your soul candle.
+          </p>
+
+          <div className="pt-2">
+            <Link
+              href="/quiz"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-brand-gold hover:bg-brand-peach text-brand-charcoal rounded-full text-xs font-bold tracking-widest uppercase transition-all duration-300 shadow-xl"
+            >
+              <span>Begin Scent Quiz</span>
+              <Sparkles size={14} />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ========================================================= */}
+      {/* HERITAGE CHAPTER TEASER */}
+      {/* ========================================================= */}
+      <section className="py-16 sm:py-24 bg-brand-cream/25 text-brand-charcoal border-b border-brand-peach/15">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+
+            <div className="relative aspect-video lg:aspect-square w-full rounded-3xl overflow-hidden border border-brand-peach/30 shadow-xl bg-white">
+              <img
+                src="/gift_set.png"
+                alt="Radharaman Candle Crafting"
+                className="object-cover w-full h-full"
+              />
+            </div>
+
+            <div className="space-y-6">
+              <span className="text-xs font-bold uppercase tracking-[0.3em] text-brand-gold">Our Sacred Heritage</span>
+              <h2 className="font-serif text-3xl sm:text-4xl font-bold text-brand-charcoal leading-tight">
+                An Ode to Vrindavan Light & Devotion
+              </h2>
+              <div className="h-0.5 w-16 bg-brand-gold" />
+
+              <p className="text-xs sm:text-sm text-brand-charcoal/80 leading-relaxed font-light">
+                Every candle is hand-poured in small, custom batches inside our boutique workshop. We combine pure, food-grade soybean waxes with natural essential oils sourced sustainably from their geographic origins.
+              </p>
+
+              <p className="text-xs sm:text-sm text-brand-charcoal/80 leading-relaxed font-light">
+                From the calming cedar of the high Himalayas to the night-blooming jasmines of ancient gardens, we formulate fragrance oils that burn cleanly, leave a gentle throwing scent, and respect the air you breathe.
+              </p>
+
+              <div className="pt-2">
+                <Link
+                  href="/about"
+                  className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-brand-charcoal hover:text-brand-gold border-b-2 border-brand-gold pb-1 transition-colors"
+                >
+                  <span>Read Our Full Story & Rituals</span>
+                  <ArrowRight size={13} />
+                </Link>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* ========================================================= */}
+      {/* CUSTOMER REVIEWS */}
+      {/* ========================================================= */}
+      <section className="py-16 sm:py-24 bg-white text-brand-charcoal">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-12">
+          
+          <div className="text-center space-y-3">
+            <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-brand-gold">Customer Stories</span>
+            <h2 className="font-serif text-3xl font-bold">Whispers of Devotion</h2>
+            <div className="gold-divider mx-auto w-24" />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+            <div className="p-6 bg-brand-cream/30 rounded-2xl border border-brand-peach/15 shadow-xs space-y-4 hover:border-brand-gold/40 transition-colors duration-300">
+              <div className="flex text-amber-500">
+                {Array.from({ length: 5 }).map((_, i) => <Star key={i} size={13} fill="currentColor" />)}
+              </div>
+              <p className="text-xs text-brand-charcoal/75 leading-relaxed italic">
+                &ldquo;The Vrindavan Jasmine candle is absolutely magical. The throw is gentle yet fills my entire living space with the exact aroma of blooming night jasmines. Hands down the highest quality candle I own.&rdquo;
+              </p>
+              <div className="border-t border-brand-peach/10 pt-3">
+                <span className="text-xs font-bold block text-brand-charcoal">Aishwarya R.</span>
+                <span className="text-[9px] text-brand-charcoal/50 block">Verified Purchaser</span>
+              </div>
+            </div>
+
+            <div className="p-6 bg-brand-cream/30 rounded-2xl border border-brand-peach/15 shadow-xs space-y-4 hover:border-brand-gold/40 transition-colors duration-300">
+              <div className="flex text-amber-500">
+                {Array.from({ length: 5 }).map((_, i) => <Star key={i} size={13} fill="currentColor" />)}
+              </div>
+              <p className="text-xs text-brand-charcoal/75 leading-relaxed italic">
+                &ldquo;Mystic Oudh has completely changed my meditation routine. It has a beautiful grounding quality that is rich, deep, and not artificial at all. The wooden wick crackles softly, which is soothing.&rdquo;
+              </p>
+              <div className="border-t border-brand-peach/10 pt-3">
+                <span className="text-xs font-bold block text-brand-charcoal">Vikram K.</span>
+                <span className="text-[9px] text-brand-charcoal/50 block">Verified Purchaser</span>
+              </div>
+            </div>
+
+            <div className="p-6 bg-brand-cream/30 rounded-2xl border border-brand-peach/15 shadow-xs space-y-4 hover:border-brand-gold/40 transition-colors duration-300">
+              <div className="flex text-amber-500">
+                {Array.from({ length: 5 }).map((_, i) => <Star key={i} size={13} fill="currentColor" />)}
+              </div>
+              <p className="text-xs text-brand-charcoal/75 leading-relaxed italic">
+                &ldquo;Bought the Imperial Gift Set for my mother and she was in tears. The packaging alone feels like royalty, wrapped in gold and velvet. Each candle burns cleanly. Will purchase again!&rdquo;
+              </p>
+              <div className="border-t border-brand-peach/10 pt-3">
+                <span className="text-xs font-bold block text-brand-charcoal">Meera S.</span>
+                <span className="text-[9px] text-brand-charcoal/50 block">Verified Purchaser</span>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+      {/* Quick View Modal */}
       <ProductDetailModal
         product={selectedProduct}
         onClose={() => setSelectedProduct(null)}
-        onRequireLogin={handleRequireLogin}
+        onRequireLogin={() => {}}
       />
 
-      <CheckoutModal
-        isOpen={isCheckoutOpen}
-        onClose={() => setIsCheckoutOpen(false)}
-      />
-
-      <LoginModal
-        isOpen={isLoginOpen}
-        onClose={() => setIsLoginOpen(false)}
-        message={loginMessage}
-      />
     </div>
   );
 }
