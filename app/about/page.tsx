@@ -30,6 +30,20 @@ export default function AboutPage() {
           <p className="max-w-2xl mx-auto text-xs sm:text-base text-brand-charcoal/75 font-light leading-relaxed">
             Every Radharaman candle is an ode to timeless beauty, spiritual illumination, and quiet comfort. Discover the heritage behind our sacred aromas.
           </p>
+
+          {/* Official Brand Insignia Seal */}
+          <div className="pt-4 flex flex-col items-center justify-center">
+            <div className="relative w-48 h-48 sm:w-56 sm:h-56 rounded-3xl overflow-hidden shadow-2xl border border-brand-gold/40 bg-white p-2 group hover:scale-102 transition-transform duration-500">
+              <img
+                src="/logo.jpg"
+                alt="Radharaman Luxury Candles Official Insignia"
+                className="w-full h-full object-contain rounded-2xl"
+              />
+            </div>
+            <span className="text-[10px] uppercase font-bold tracking-[0.25em] text-brand-gold-dark mt-3 block">
+              Official Insignia of Illumination
+            </span>
+          </div>
         </div>
       </section>
 

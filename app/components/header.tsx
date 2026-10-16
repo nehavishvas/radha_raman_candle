@@ -86,22 +86,25 @@ export default function Header() {
             {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
 
-          {/* Logo Brand - Left on desktop */}
-          <Link href="/" className="flex items-center gap-3 select-none group">
-            <div className="relative w-9 h-9 sm:w-10 sm:h-10 rounded-full overflow-hidden border border-brand-gold/40 shadow-sm transition-transform duration-300 group-hover:scale-105">
+          {/* Logo Brand - Centered on mobile/tablet, left on desktop */}
+          <Link 
+            href="/" 
+            className="flex items-center gap-2.5 sm:gap-3 select-none group max-lg:absolute max-lg:left-1/2 max-lg:-translate-x-1/2"
+          >
+            <div className="relative w-10 h-10 sm:w-11 sm:h-11 rounded-full overflow-hidden border border-brand-gold/50 shadow-sm transition-transform duration-300 group-hover:scale-105 bg-[#f3ded2] shrink-0">
               <img
-                src="/logo.jpg"
+                src="/logo-emblem.jpg"
                 alt="Radharaman Luxury Candles"
                 className="object-cover w-full h-full"
               />
             </div>
             <div className="flex flex-col text-left">
-              <span className={`font-serif text-xl sm:text-2xl font-bold tracking-widest transition-colors ${
+              <span className={`font-serif text-lg sm:text-2xl font-bold tracking-widest transition-colors whitespace-nowrap ${
                 scrolled ? "text-brand-cream" : "text-brand-charcoal group-hover:text-brand-gold-dark"
               }`}>
                 RADHARAMAN
               </span>
-              <span className="text-[8px] sm:text-[9px] font-semibold tracking-[0.25em] text-brand-gold uppercase -mt-0.5">
+              <span className="text-[8px] sm:text-[9px] font-semibold tracking-[0.25em] text-brand-gold uppercase -mt-0.5 whitespace-nowrap">
                 LUXURY CANDLES
               </span>
             </div>

@@ -66,17 +66,22 @@ export default function Footer() {
           
           {/* Brand info (2 cols on large) */}
           <div className="col-span-2 space-y-4">
-            <Link href="/" className="flex items-center gap-2.5 select-none">
-              <div className="relative w-8 h-8 rounded-full overflow-hidden border border-brand-gold/40">
+            <Link href="/" className="flex items-center gap-3 select-none group">
+              <div className="relative w-9 h-9 sm:w-10 sm:h-10 rounded-full overflow-hidden border border-brand-gold/50 bg-[#f3ded2] shrink-0 transition-transform duration-300 group-hover:scale-105">
                 <img
-                  src="/logo.jpg"
+                  src="/logo-emblem.jpg"
                   alt="Radharaman Luxury Candles"
-                  className="object-cover w-full h-full"
+                  className="object-cover w-full h-full scale-102"
                 />
               </div>
-              <span className="font-serif text-xl font-bold tracking-widest text-white">
-                RADHARAMAN
-              </span>
+              <div className="flex flex-col text-left">
+                <span className="font-serif text-xl font-bold tracking-widest text-white group-hover:text-brand-peach transition-colors">
+                  RADHARAMAN
+                </span>
+                <span className="text-[8px] font-semibold tracking-[0.22em] text-brand-gold uppercase -mt-0.5">
+                  LUXURY CANDLES
+                </span>
+              </div>
             </Link>
             <p className="text-white/60 leading-relaxed text-xs max-w-sm">
               Sacred hand-poured illumination crafted with natural soy wax and ethically sourced pure botanicals. Inspired by the immortal peace of Vrindavan.
